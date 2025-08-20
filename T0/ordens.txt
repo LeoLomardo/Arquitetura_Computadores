@@ -1,0 +1,8 @@
+1-Criar arquivo que gera arquivo .dat com valores float -- gera_float.c 
+    gcc -Wall -o geraFloat gera_float.com
+        ./geraFloat 8 16 matrizA.dat  
+        ./geraFloat 16 8 matrizB.dat  
+
+2-Criar arquivos de multiplicacao de matriz matrix_lib.c e matrix_lib.h
+    gcc -Wall -o testMat matrix_lib_test.c matrix_lib.c timer.c
+        ./testMat 5.0 8 16 16 8 matrizA.dat matrizB.dat result1.dat result2.dat
