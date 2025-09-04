@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 
     FILE *file = fopen(filename, "wb");
     if (file == NULL) {
-        fprintf(stderr, "Erro: Não foi possível abrir o arquivo %s para escrita.\n", filename);
+        fprintf(stderr, "Erro: Nao foi possivel abrir o arquivo %s para escrita.\n", filename);
         return 1;
     }
 
