@@ -119,9 +119,9 @@ int main(int argc, char *argv[]) {
     save_matrix_to_file(argv[9], &matrixC);
 
     //imprime as matrizes
-    print_matrix_elements("Matriz A:", &matrixA);
+    /*print_matrix_elements("Matriz A:", &matrixA);
     print_matrix_elements("Matriz B:", &matrixB);
-    print_matrix_elements("Matriz C:", &matrixC);
+    print_matrix_elements("Matriz C:", &matrixC);*/
 
     deallocate_matrix(&matrixA);
     deallocate_matrix(&matrixB);
