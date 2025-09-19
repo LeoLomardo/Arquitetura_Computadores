@@ -28,6 +28,7 @@ int matrix_matrix_mult(struct matrix *matrixA, struct matrix *matrixB, struct ma
         return 0;
     }
     
+    
     for (unsigned long int i = 0; i < matrixA->height; i++) {
 
         for (unsigned long int k = 0; k < matrixA->width; k++) {

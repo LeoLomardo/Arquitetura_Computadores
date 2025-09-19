@@ -1,0 +1,26 @@
+gcc -Wall -o testMat matrix_lib_test.c matrix_lib.c timer.c
+    ./testMat 1.0 1024 1024 1024 1024 1024_A.dat 1024_B.dat result1_1024.dat result2_1024.dat
+
+
+PRIMEIRO ALGORITMO(T0 - TRADICIONAL):
+    1024X1024: ./testMat 1.0 1024 1024 1024 1024 1024_A.dat 1024_B.dat result1_1024.dat result2_1024.dat
+        Scalar-matrix multiplication time: 4.306000 ms
+        Matrix-matrix multiplication time: 9796.763672 ms
+        Overall time: 9809.210938 ms
+
+
+    2048x2048: ./testMat 1.0 2048 2048 2048 2048 2048_A.dat 2048_B.dat result1_2048.dat result2_2048.dat
+        Scalar-matrix multiplication time: 18.660999 ms
+        Matrix-matrix multiplication time: 186837.734375 ms
+        Overall time: 186879.953125 ms
+
+SEGUNDO ALGORITMO(T1 - OTIMIZADO):
+    1024X1024: ./testMat 1.0 1024 1024 1024 1024 1024_A.dat 1024_B.dat result1_1024.dat result2_1024.dat
+        Scalar-matrix multiplication time: 4.076000 ms
+        Matrix-matrix multiplication time: 6899.422852 ms
+        Overall time: 6911.100098 ms
+
+    2048x2048: ./testMat 1.0 2048 2048 2048 2048 2048_A.dat 2048_B.dat result1_2048.dat result2_2048.dat
+        Scalar-matrix multiplication time: 16.632000 ms
+        Matrix-matrix multiplication time: 53089.695312 ms
+        Overall time: 53130.019531 ms

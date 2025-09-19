@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
     load_matrix_from_file(argv[6], &matrixA);
     load_matrix_from_file(argv[7], &matrixB);
     
+    // setando todos os valores das colunas de C como 0, igual no algoritmo
     memset(matrixC.rows, 0, matrixC.height * matrixC.width * sizeof(float));
 
     gettimeofday(&start, NULL);
@@ -119,9 +120,9 @@ int main(int argc, char *argv[]) {
     save_matrix_to_file(argv[9], &matrixC);
 
     //imprime as matrizes
-    print_matrix_elements("Matriz A:", &matrixA);
+    /*print_matrix_elements("Matriz A:", &matrixA);
     print_matrix_elements("Matriz B:", &matrixB);
-    print_matrix_elements("Matriz C:", &matrixC);
+    print_matrix_elements("Matriz C:", &matrixC);*/
 
     deallocate_matrix(&matrixA);
     deallocate_matrix(&matrixB);
