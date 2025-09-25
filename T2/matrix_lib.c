@@ -9,7 +9,7 @@ int scalar_matrix_mult(float scalar_value, struct matrix *matrix) {
     
     unsigned long int total_elements = matrix->height * matrix->width;
 
-    __m256 scalar_vector = _mm256_set1_ps(total_elements);
+    __m256 scalar_vector = _mm256_set1_ps(scalar_value);
 
     for(int i = 0; i < total_elements; i += 8){
        __m256 matrix_vector = _mm256_loadu_ps(&matrix->rows[i]);
