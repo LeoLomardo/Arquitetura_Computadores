@@ -1,0 +1,21 @@
+Processador--> 13th Gen Intel(R) Core(TM) i5-13400F (16) @ 4.60 GHz
+
+gcc -mfma matrix_lib.c matrix_lib_test.c timer.c -o t3
+######### 1024x1024 #############################3
+./t3 77.0 1024 1024 1024 1024 16 1024_A.dat 1024_B.dat result1_1024.dat result2_1024.dat 
+
+
+######### 2048x2048 #############################3
+./t3 77.0 2048 2048 2048 2048 8 2048_A.dat 2048_B.dat result1_2048.dat result2_2048.dat
+
+Análise Comparativa:
+    A = e * A
+        1024--> 
+        2048--> 
+    AxB=C 
+        1024--> 
+        2048--> 
+    Overall:
+        1024--> 
+        2048-->
+
