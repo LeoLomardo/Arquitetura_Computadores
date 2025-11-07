@@ -21,13 +21,14 @@ int scalar_matrix_mult(float scalar_value, struct matrix *matrix) {
         return 0;
     }
 
-    unsigned long int total_elements = (unsigned long int)matrix->height * matrix->width;
+    unsigned long int total_elements = matrix->height * matrix->width;
+	cudaError_t cudaError;
 
     // Aloca memória no device
-    cudaError_t cudaError = cudaMalloc(&matrix->d_rows, total_elements * sizeof(float));
+    cudaError = cudaMalloc(&matrix->d_rows, total_elements * sizeof(float));
     if (cudaError != cudaSuccess) {
         printf("Erro ao alocar memória no device: %s\n", cudaGetErrorString(cudaError));
-        return 0;
+		return 0;
     }
 
     // Copia os dados da matriz do host para o device
@@ -42,7 +43,9 @@ int scalar_matrix_mult(float scalar_value, struct matrix *matrix) {
     int blocks_per_grid = (total_elements + threads_per_block - 1) / threads_per_block;
 
     // Lança o kernel
-    scalar_matrix_mult_kernel<<<blocks_per_grid, threads_per_block>>>(scalar_value, matrix->d_rows, total_elements);
+    scalar_matrix_mult_kernel<<<blocks_per_grid, threads_per_block>>>(
+		scalar_value, matrix->d_rows, total_elements
+	);
 
     // Sincroniza e checa erro de execução
     cudaError = cudaDeviceSynchronize();
@@ -64,4 +67,3 @@ int scalar_matrix_mult(float scalar_value, struct matrix *matrix) {
 
     return 1;
 }
-
