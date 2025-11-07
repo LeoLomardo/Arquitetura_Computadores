@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "matrix_lib.h"
+extern "C" {
 #include "timer.h"
+}
 
 void allocate_matrix(struct matrix *m) {
     m->h_rows = (float *)malloc(m->height * m->width * sizeof(float));
@@ -109,20 +111,20 @@ int main(int argc, char *argv[]) {
 
     save_matrix_to_file(argv[11], &matrixA);
     
-    // gettimeofday(&start, NULL);
-    // if (!matrix_matrix_mult(&matrixA, &matrixB, &matrixC)) {
-    //     fprintf(stderr, "Error during matrix matrix multiplication.\n");
-    //     return 1;
-    // }
-    // gettimeofday(&stop, NULL);
-    // printf("Matrix-matrix multiplication time: %f ms\n", timedifference_msec(start, stop));
+    gettimeofday(&start, NULL);
+    if (!matrix_matrix_mult(&matrixA, &matrixB, &matrixC)) {
+        fprintf(stderr, "Error during matrix matrix multiplication.\n");
+        return 1;
+    }
+    gettimeofday(&stop, NULL);
+    printf("Matrix-matrix multiplication time: %f ms\n", timedifference_msec(start, stop));
 
-    // save_matrix_to_file(argv[12], &matrixC);
+    save_matrix_to_file(argv[12], &matrixC);
 
     //imprime as matrizes
     print_matrix_elements("Matriz A:", &matrixA);
-    // print_matrix_elements("Matriz B:", &matrixB);
-    // print_matrix_elements("Matriz C:", &matrixC);
+    print_matrix_elements("Matriz B:", &matrixB);
+    print_matrix_elements("Matriz C:", &matrixC);
 
     deallocate_matrix(&matrixA);
     deallocate_matrix(&matrixB);
