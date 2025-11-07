@@ -5,7 +5,7 @@
 #include "timer.h"
 
 void allocate_matrix(struct matrix *m) {
-    m->h_rows = (float *)aligned_alloc(m->height * m->width * sizeof(float));
+    m->h_rows = (float *)malloc(m->height * m->width * sizeof(float));
     if (m->h_rows == NULL) {
         fprintf(stderr, "Error: Memory allocation failed.\n");
         exit(1);
@@ -64,8 +64,8 @@ void print_matrix_elements(const char* name, struct matrix *m) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 11) {
-        fprintf(stderr, "Usage: %s <scalar> <A_height> <A_width> <B_height> <B_width> <NUM_THREADS> <file_A> <file_B> <file_result1> <file_result2>\n", argv[0]);
+    if (argc != 13) {
+        fprintf(stderr, "Usage: %s <scalar> <A_height> <A_width> <B_height> <B_width> <NUM_THREADS> <BLOCS_PER_GRID> <MAX_MEMORY> <file_A> <file_B> <file_result1> <file_result2>\n", argv[0]);
         return 1;
     }
 
@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
     int threads_per_block = strtol(argv[6], NULL, 10);
 	int max_blocks = strtol(argv[7], NULL, 10);
 	int max_memory = strtol(argv[8], NULL, 10);
-    set_number_threads(threads_per_block);
 
     if (matrixA.width != matrixB.height) {
         fprintf(stderr, "Error: Incompatible dimensions for matrix multiplication.\n");
@@ -110,20 +109,20 @@ int main(int argc, char *argv[]) {
 
     save_matrix_to_file(argv[11], &matrixA);
     
-    gettimeofday(&start, NULL);
-    if (!matrix_matrix_mult(&matrixA, &matrixB, &matrixC)) {
-        fprintf(stderr, "Error during matrix matrix multiplication.\n");
-        return 1;
-    }
-    gettimeofday(&stop, NULL);
-    printf("Matrix-matrix multiplication time: %f ms\n", timedifference_msec(start, stop));
+    // gettimeofday(&start, NULL);
+    // if (!matrix_matrix_mult(&matrixA, &matrixB, &matrixC)) {
+    //     fprintf(stderr, "Error during matrix matrix multiplication.\n");
+    //     return 1;
+    // }
+    // gettimeofday(&stop, NULL);
+    // printf("Matrix-matrix multiplication time: %f ms\n", timedifference_msec(start, stop));
 
-    save_matrix_to_file(argv[12], &matrixC);
+    // save_matrix_to_file(argv[12], &matrixC);
 
     //imprime as matrizes
     print_matrix_elements("Matriz A:", &matrixA);
-    print_matrix_elements("Matriz B:", &matrixB);
-    print_matrix_elements("Matriz C:", &matrixC);
+    // print_matrix_elements("Matriz B:", &matrixB);
+    // print_matrix_elements("Matriz C:", &matrixC);
 
     deallocate_matrix(&matrixA);
     deallocate_matrix(&matrixB);
