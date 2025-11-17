@@ -8,6 +8,7 @@ extern "C" {
 
 void allocate_matrix(struct matrix *m) {
     m->h_rows = (float *)malloc(m->height * m->width * sizeof(float));
+    m->d_rows = NULL;
     if (m->h_rows == NULL) {
         fprintf(stderr, "Error: Memory allocation failed.\n");
         exit(1);
@@ -18,6 +19,69 @@ void deallocate_matrix(struct matrix *m) {
     if (m != NULL && m->h_rows != NULL) {
         free(m->h_rows);
     }
+}
+
+void allocate_gpu(struct matrix *A, struct matrix *B, struct matrix *C, int max_memory_MiB) {
+    unsigned long long sizeA = (unsigned long long)A->height * A->width * sizeof(float);
+    unsigned long long sizeB = (unsigned long long)B->height * B->width * sizeof(float);
+    unsigned long long sizeC = (unsigned long long)C->height * C->width * sizeof(float);
+
+    unsigned long long max_bytes = (unsigned long long)max_memory_MiB * 1024ULL * 1024ULL;
+
+    cudaError_t errA, errB, errC;
+
+    //FULL_ALLOCATION
+    unsigned long long full_request = sizeA + sizeB + sizeC;
+
+    errA = cudaMalloc((void**)&A->d_rows, sizeA);
+    errB = cudaMalloc((void**)&B->d_rows, sizeB);
+    errC = cudaMalloc((void**)&C->d_rows, sizeC);
+
+    if (errA == cudaSuccess && errB == cudaSuccess && errC == cudaSuccess &&
+        full_request <= max_bytes) {
+        printf("GPU ALLOCATION MODE: FULL ALLOCATION\n");
+
+        A->alloc_mode = FULL_ALLOCATION;
+        B->alloc_mode = FULL_ALLOCATION;
+        C->alloc_mode = FULL_ALLOCATION;
+
+        return;
+    }
+
+    // libera qualquer alocação parcial
+    if (A->d_rows) cudaFree(A->d_rows), A->d_rows = NULL;
+    if (B->d_rows) cudaFree(B->d_rows), B->d_rows = NULL;
+    if (C->d_rows) cudaFree(C->d_rows), C->d_rows = NULL;
+
+    //PARTIAL_ALLOCATION
+    unsigned long long rowA = A->width * sizeof(float);
+    unsigned long long rowC = C->width * sizeof(float);
+
+    unsigned long long partial_request = sizeB + rowA + rowC;
+
+    if (partial_request <= max_bytes) {
+        errB = cudaMalloc((void**)&B->d_rows, sizeB);
+        errA = cudaMalloc((void**)&A->d_rows, rowA);
+        errC = cudaMalloc((void**)&C->d_rows, rowC);
+
+        if (errA == cudaSuccess && errB == cudaSuccess && errC == cudaSuccess) {
+            printf("GPU ALLOCATION MODE: PARTIAL_ALLOCATION (A & C), FULL (B)\n");
+
+            A->alloc_mode = PARTIAL_ALLOC;
+            B->alloc_mode = FULL_ALLOCATION;
+            C->alloc_mode = PARTIAL_ALLOC;
+
+            return;
+        }
+
+        // se qualquer um falhar, libera
+        if (A->d_rows) cudaFree(A->d_rows), A->d_rows = NULL;
+        if (B->d_rows) cudaFree(B->d_rows), B->d_rows = NULL;
+        if (C->d_rows) cudaFree(C->d_rows), C->d_rows = NULL;
+    }
+
+    printf("GPU ERROR: Cannot allocate required memory on NVIDIA GPU.\n");
+    exit(1);
 }
 
 void load_matrix_from_file(const char *filename, struct matrix *m) {
@@ -98,9 +162,18 @@ int main(int argc, char *argv[]) {
     allocate_matrix(&matrixA);
     allocate_matrix(&matrixB);
     allocate_matrix(&matrixC);
+    allocate_gpu(&matrixA, &matrixB, &matrixC, max_memory);
 
     load_matrix_from_file(argv[9], &matrixA);
     load_matrix_from_file(argv[10], &matrixB);
+
+    int accepted = set_grid_size(threads_per_block, max_blocks);
+
+    if (accepted)
+        printf("Grid config accepted: %d threads per block, %d max blocks\n",
+            threads_per_block, max_blocks);
+    else
+        printf("Grid config invalid. Using defaults: 256 threads, 4096 blocks.\n");
 
     gettimeofday(&start, NULL);
     if (!scalar_matrix_mult(scalar_value, &matrixA)) {

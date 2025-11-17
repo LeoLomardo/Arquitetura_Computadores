@@ -1,5 +1,7 @@
 #ifndef MATRIX_LIB_H
 #define MATRIX_LIB_H
+#define FULL_ALLOCATION 0
+#define PARTIAL_ALLOC 1
 
 struct matrix {
     unsigned long int height;
